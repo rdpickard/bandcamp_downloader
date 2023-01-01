@@ -3,6 +3,10 @@ import base64
 import logging
 import time
 import sys
+import pathlib
+import urllib.parse
+import shutil
+
 
 import requests
 import arrow
@@ -160,6 +164,50 @@ print(f"Album elements count {len(album_elements)}")
 # for album_element in album_elements:
 #   print(album_element.text.replace("\n"," "))
 
+all_art_container_elements = headless_browser.find_elements(by=By.CLASS_NAME, value="collection-item-art-container")
+
+keepcharacters = (' ','_','-')
+
+for art_container_element in all_art_container_elements:
+    inner_container = None
+
+    try:
+        inner_container = art_container_element.find_element(by=By.CLASS_NAME, value="banner-inner")
+    except selenium.common.exceptions.NoSuchElementException:
+        continue
+
+    if inner_container is not None:
+        img_element = art_container_element.find_element(by=By.CLASS_NAME, value="collection-item-art")
+        img_url = img_element.get_attribute("src")
+
+        album_name = "unknown"
+        band_name = "unknown"
+
+        try:
+            album_text_element = art_container_element.find_element(by=By.XPATH, value="following-sibling::*")
+            album_name = album_text_element.find_element(by=By.CLASS_NAME, value="collection-item-title").text
+            band_name = album_text_element.find_element(by=By.CLASS_NAME, value="collection-item-artist").text
+            band_name = band_name.replace("by ","")
+        except selenium.common.exceptions.NoSuchElementException:
+            print ("CANT FIND SIBLING")
+
+        print(f"{album_name} {band_name} {img_url}")
+
+        filename = "".join(c for c in f"{band_name}--{album_name}" if c.isalnum() or c in keepcharacters).rstrip()
+        img_suffix_from_url = pathlib.Path(os.path.basename(urllib.parse.urlparse(img_url).path)).suffix
+        filename = filename+img_suffix_from_url
+
+        print(filename)
+
+        response = requests.get(img_url, stream=True)
+        with open(filename, 'wb') as out_file:
+            shutil.copyfileobj(response.raw, out_file)
+        del response
+
+    else:
+        print("no inner container")
+
+"""
 
 download_elements = headless_browser.find_elements(by=By.XPATH, value="//a[text()='download']")
 print(f"Download element count {len(download_elements)}")
@@ -197,3 +245,7 @@ for download_link in download_links:
     else:
         print("DOWNLOAD LINK IS NONE")
     time.sleep(5)
+
+"""
+time.sleep(5)
+headless_browser.quit()

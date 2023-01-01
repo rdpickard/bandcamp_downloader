@@ -1,0 +1,76 @@
+<HeaderCell>
+    size_hint: (None, None)
+    height: 60
+    width: 400
+    text_size: self.size
+    halign: "left"
+    valign: "middle"
+    background_disabled_normal: ''
+    disabled_color: (1, 1, 1, 1)
+    canvas.before:
+        Color:
+            rgba: 0.165, 0.165, 0.165, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<TableHeader>:
+    header: header
+    bar_width: 0
+    do_scroll: False
+    size_hint: (1, None)
+    effect_cls: "ScrollEffect"
+    height: 60
+    GridLayout:
+        id: header
+        rows: 1
+        size_hint: (None, None)
+        width: self.minimum_width
+        height: self.minimum_height
+
+<ScrollCell>:
+    orientation: 'horizontal'
+    label: label
+    size_hint: (None, None)
+    size: (400, 60)
+    text: ''
+    canvas.before:
+        Color:
+            rgba: [0.23, 0.23, 0.23, 1] if self.is_even else [0.2, 0.2, 0.2, 1]
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    ScrollView:
+        scroll_type: ['bars', 'content']
+        do_scroll_x: True
+        do_scroll_y: False
+        effect_cls: "ScrollEffect"
+        Label:
+            id: label
+            text_size: None, self.height
+            size_hint: (None, 1)
+            width: self.texture_size[0]
+            text: root.text
+            padding_x: 10
+
+
+
+<TableData>:
+    rgrid: rgrid
+    bar_width: 25
+    scroll_type: ['bars']
+    bar_color: [0.2, 0.7, 0.9, 1]
+    bar_inactive_color: [0.2, 0.7, 0.9, .5]
+    do_scroll_x: True
+    do_scroll_y: True
+    effect_cls: "ScrollEffect"
+    viewclass: "ScrollCell"
+    RecycleGridLayout:
+        id: rgrid
+        rows: root.nrows
+        cols: root.ncols
+        size_hint: (None, None)
+        width: self.minimum_width
+        height: self.minimum_height
+        col_default_width: 400
+        row_default_height: 60
