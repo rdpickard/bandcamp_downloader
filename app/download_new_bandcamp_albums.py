@@ -17,6 +17,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 
+
 chrome_path = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 bandcamp_account_username = os.environ.get("BANDCAMP_ACCOUNT_USERNAME")
@@ -178,7 +179,7 @@ logger.info(f"BEFORE CAPTCHA DECTOR {filename}")
 
 logger.debug("Clicked login. Waiting for user page to load")
 
-# TODO need to catch / notifiy there is a CAPTCHA
+# TODO need to catch / notify there is a CAPTCHA
 
 
 time.sleep(.5)
